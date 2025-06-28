@@ -1,0 +1,17 @@
+sudo apt update && sudo apt install -y \
+    python3.10-venv \
+    python3-dev \
+    build-essential \
+    libopenblas-dev \
+    libxgboost-dev \
+    libboost-all-dev \
+    libglib2.0-dev \
+    cmake \
+    libffi-dev \
+    libssl-dev \
+    pkg-config
+
+python3.10 -m venv .venv
+source .venv/bin/activate
+pip install --upgrade pip setuptools wheel
+pip install -r requirements.txt --no-build-isolation
