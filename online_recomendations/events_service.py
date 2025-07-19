@@ -1,4 +1,9 @@
 from fastapi import FastAPI
+import requests
+
+
+features_store_url = "http://127.0.0.1:8010"
+events_store_url = "http://127.0.0.1:8020"
 
 
 class EventStore:
@@ -49,3 +54,35 @@ async def get(user_id: int, k: int = 10):
     events = events_store.get(user_id, k)
 
     return {"events": events}
+
+
+@app.post("/recommendations_online")
+async def recommendations_online(user_id: int, k: int = 100):
+    """
+    Возвращает список онлайн-рекомендаций длиной k для пользователя user_id
+    """
+
+    headers = {"Content-type": "application/json", "Accept": "text/plain"}
+
+    # получаем последнее событие пользователя
+    params = {"user_id": user_id, "k": 1}
+    resp = requests.post(events_store_url + "/get", headers=headers, params=params)
+    events = resp.json()
+    events = events["events"]
+
+    # получаем список похожих объектов
+    if len(events) > 0:
+        item_id = events[0]
+        params = {"item_id": item_id, "k": k}
+        resp = requests.post(
+            features_store_url + "/similar_items", headers=headers, params=params
+        )
+        if resp.status_code == 200:
+            item_similar_items = resp.json().get("item_id_2",[])
+        else:
+            item_similar_items = []
+        recs = item_similar_items[:k]
+    else:
+        recs = []
+
+    return {"recs": recs}
