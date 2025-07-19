@@ -12,4 +12,9 @@ else:
     result = None
     print(f"status code: {resp.status_code}")
 
+
+params = {"user_id": 1291248, "item_id": 17245}
+
+resp = requests.post(events_store_url + "/put", headers=headers, params=params)
+
 print(result)
