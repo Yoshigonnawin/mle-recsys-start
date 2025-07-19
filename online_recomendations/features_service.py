@@ -30,7 +30,10 @@ class SimilarItems:
         """
         try:
             i2i = self._similar_items.query(f"item_id_1 == {str(item_id)}").head(k)
-            i2i = {"item_id_2":i2i["item_id_2"].to_list(),"score":i2i["score"].to_list()}
+            i2i = {
+                "item_id_2": i2i["item_id_2"].to_list(),
+                "score": i2i["score"].to_list(),
+            }
         except KeyError:
             logger.error("No recommendations found")
             i2i = {"item_id_2": [], "score": {}}
